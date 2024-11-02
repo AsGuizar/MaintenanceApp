@@ -1,0 +1,21 @@
+ion-card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px); // Lift the card on hover
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.task-list {
+  margin-top: 20px;
+
+  ion-item {
+    background: white; // White background for tasks
+    border-radius: 8px;
+    margin-bottom: 10px; // Spacing between items
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); // Light shadow
+  }
+}
