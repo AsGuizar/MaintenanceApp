@@ -1,40 +1,56 @@
-// src/app/features/report/report.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MaintenanceService } from '../../core/services/maintenance.service';
 import { MaintenanceTask } from '../../models/maintenance.model';
+import { Router } from '@angular/router'; // Import Router
 
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
 })
-export class ReportComponent {
+export class ReportComponent implements OnInit {
   tasks: MaintenanceTask[] = [];
-  startDate: Date;               // Declare startDate
-  endDate: Date;                 // Declare endDate
-  filteredTasks: MaintenanceTask[] = []; // Define filteredTasks property
+  filteredTasks: MaintenanceTask[] = [];
+  startDate: string = '';
+  endDate: string = '';
+  addedTasks: MaintenanceTask[] = [];
+  inProgressTasks: MaintenanceTask[] = [];
+  finishedTasks: MaintenanceTask[] = [];
 
-  constructor(private maintenanceService: MaintenanceService) {
-    this.tasks = this.maintenanceService.getTasks();
-    this.startDate = new Date();  // Initialize to current date
-    this.endDate = new Date();    // Initialize to current date
+  constructor(private maintenanceService: MaintenanceService, private router: Router) {} // Inject Router
+
+  ngOnInit() {
+    this.loadTasks();
+  }
+
+  loadTasks() {
+    this.tasks = this.maintenanceService.getTasks(); // Assuming this returns all tasks
   }
 
   generateReport() {
-    // Check if startDate or endDate is null and provide an alert
-    if (!this.startDate || !this.endDate) {
-      alert('Please set both start and end dates.');
-      return;
+    if (this.startDate && this.endDate) {
+      const start = new Date(this.startDate);
+      const end = new Date(this.endDate);
+      
+      this.addedTasks = this.tasks.filter(task => 
+        new Date(task.date) >= start && new Date(task.date) <= end
+      );
+
+      this.inProgressTasks = this.tasks.filter(task => 
+        task.status === 'in progress' && new Date(task.date) >= start && new Date(task.date) <= end
+      );
+
+      this.finishedTasks = this.tasks.filter(task => 
+        task.status === 'completed' && new Date(task.date) >= start && new Date(task.date) <= end
+      );
     }
+  }
 
-    // Proceed to filter tasks only if the dates are valid
-    this.filteredTasks = this.tasks.filter(task => {
-      const taskDate = new Date(task.reminderDate); // Ensure you are filtering by reminderDate
-      return taskDate >= this.startDate && taskDate <= this.endDate;
-    });
+  goHome() {
+    this.router.navigate(['/home']); // Adjust the route path as needed
+  }
 
-    // Log the filtered tasks and alert the user
-    console.log('Filtered Tasks:', this.filteredTasks);
-    alert(`Report Generated: ${this.filteredTasks.length} tasks found.`);
+  goToSettings() {
+    this.router.navigate(['/settings']); // Adjust the route path as needed
   }
 }

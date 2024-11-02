@@ -1,29 +1,67 @@
-<!-- src/app/features/report/report.component.html -->
 <ion-header>
   <ion-toolbar>
-    <ion-title>Generate Report</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="goHome()">
+        <ion-icon name="home-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Reports</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToSettings()">
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <form (ngSubmit)="generateReport()" #reportForm="ngForm">
-    <ion-item>
-      <ion-label>Start Date</ion-label>
-      <ion-input type="date" [(ngModel)]="startDate" name="startDate" required></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>End Date</ion-label>
-      <ion-input type="date" [(ngModel)]="endDate" name="endDate" required></ion-input>
-    </ion-item>
-    <ion-button expand="full" type="submit">Generate Report</ion-button>
-  </form>
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label>Start Date</ion-label>
+    <ion-input type="date" [(ngModel)]="startDate"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>End Date</ion-label>
+    <ion-input type="date" [(ngModel)]="endDate"></ion-input>
+  </ion-item>
+  <ion-button expand="full" (click)="generateReport()">Generate Report</ion-button>
 
-  <div *ngIf="filteredTasks.length > 0">
-    <h2>Filtered Tasks:</h2>
-    <ion-list>
-      <ion-item *ngFor="let task of filteredTasks">
-        <ion-label>{{ task.description }} ({{ task.category }}) - {{ task.date | date }}</ion-label>
-      </ion-item>
-    </ion-list>
-  </div>
+  <ion-card *ngIf="addedTasks.length || inProgressTasks.length || finishedTasks.length">
+    <ion-card-header>
+      <ion-card-title>Maintenance Report</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <h3>Added Tasks:</h3>
+      <ion-list>
+        <ion-item *ngFor="let task of addedTasks">
+          <ion-label>
+            <h2>{{ task.description }}</h2>
+            <p>Status: {{ task.status }}</p>
+            <p>Due: {{ task.date | date: 'shortDate' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      
+      <h3>In Progress Tasks:</h3>
+      <ion-list>
+        <ion-item *ngFor="let task of inProgressTasks">
+          <ion-label>
+            <h2>{{ task.description }}</h2>
+            <p>Status: {{ task.status }}</p>
+            <p>Due: {{ task.date | date: 'shortDate' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      
+      <h3>Finished Tasks:</h3>
+      <ion-list>
+        <ion-item *ngFor="let task of finishedTasks">
+          <ion-label>
+            <h2>{{ task.description }}</h2>
+            <p>Status: {{ task.status }}</p>
+            <p>Due: {{ task.date | date: 'shortDate' }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
