@@ -1,4 +1,3 @@
-// auth.service.ts - Manages user authentication and local storage
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -10,18 +9,20 @@ export class AuthService {
   constructor() {}
 
   login(email: string, password: string): boolean {
-    const user = { email, password }; // In a real app, you'd validate against a database
     const storedUser = localStorage.getItem('user');
 
-    if (storedUser && JSON.parse(storedUser).email === email && JSON.parse(storedUser).password === password) {
-      this.isLoggedIn = true;
-      return true;
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      if (user.email === email && user.password === password) {
+        this.isLoggedIn = true;
+        return true;
+      }
     }
     return false;
   }
 
-  register(email: string, password: string): boolean {
-    const user = { email, password };
+  register(email: string, password: string, name: string): boolean {
+    const user = { email, password, name };
     localStorage.setItem('user', JSON.stringify(user));
     return true; // Registration successful
   }
@@ -33,5 +34,10 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return this.isLoggedIn || !!localStorage.getItem('user');
+  }
+
+  getUserName(): string {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser).name : 'User';
   }
 }

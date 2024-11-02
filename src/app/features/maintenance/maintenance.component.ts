@@ -1,6 +1,5 @@
-// src/app/features/maintenance/maintenance.component.ts
 import { Component } from '@angular/core';
-import { Router } from '@angular/router'; // Import Router
+import { Router } from '@angular/router';
 import { MaintenanceService } from '../../core/services/maintenance.service';
 import { MaintenanceTask } from '../../models/maintenance.model';
 
@@ -17,6 +16,8 @@ export class MaintenanceComponent {
     reminderDate: new Date(),
     date: new Date(),
     status: 'pending',
+    frequency: 'unique', // Default frequency
+    attachments: [] // Initialize attachments
   };
 
   public isEditing: boolean = false;
@@ -24,18 +25,18 @@ export class MaintenanceComponent {
   public selectedCategory: string = '';
   public isCustomCategory: boolean = false;
 
-  constructor(public maintenanceService: MaintenanceService, private router: Router) {} // Inject Router
+  constructor(public maintenanceService: MaintenanceService, private router: Router) {}
 
   goHome() {
-    this.router.navigate(['/home']); // Navigate to home
+    this.router.navigate(['/home']);
   }
 
   goToSettings() {
-    this.router.navigate(['../settings']); // Navigate to settings
+    this.router.navigate(['../settings']);
   }
 
   goToReports() {
-    this.router.navigate(['../report']); // Navigate to reports
+    this.router.navigate(['../report']);
   }
 
   onCategoryChange() {
@@ -77,10 +78,20 @@ export class MaintenanceComponent {
       reminderDate: new Date(),
       date: new Date(),
       status: 'pending',
+      frequency: 'unique', // Reset frequency to default
+      attachments: [] // Reset attachments
     };
     this.selectedCategory = '';
     this.isEditing = false;
     this.currentTaskId = '';
+  }
+
+  onFileSelected(event: Event) {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files) {
+      const files = Array.from(fileInput.files);
+      this.newTask.attachments = files.map(file => file.name); // Store file names
+    }
   }
 
   private generateId(): string {

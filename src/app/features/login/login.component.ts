@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   email: string = '';
   password: string = '';
+  name: string = ''; // To hold the user's name during registration
   isRegistering: boolean = false; // Track if the user is registering
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -23,7 +24,7 @@ export class LoginComponent {
   }
 
   onRegister() {
-    if (this.authService.register(this.email, this.password)) {
+    if (this.authService.register(this.email, this.password, this.name)) {
       alert('Registration successful! You can now log in.');
       this.isRegistering = false; // Switch back to login view
     } else {

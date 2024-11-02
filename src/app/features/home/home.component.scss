@@ -1,0 +1,43 @@
+ion-content {
+  --background: #f0f0f0; // Adjust as needed
+}
+
+.greeting-message {
+  text-align: center;
+  margin-bottom: 20px; // Space below the greeting
+  color: #333; // Darker text for contrast
+
+  h2 {
+    font-size: 2rem; // Larger font for the main greeting
+    margin: 0; // Remove default margin
+    font-weight: bold; // Bold text
+  }
+
+  p {
+    font-size: 1.3rem; // Slightly larger font for the subtext
+    margin-top: 5px; // Space above the subtext
+    color: #555; // Lighter color for subtext
+  }
+}
+
+.task-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  padding: 10px;
+  overflow: auto; // Allow scrolling
+  max-height: 90vh; // Set max height for scrolling
+}
+
+.task-card {
+  background-color: #000; // Black background
+  color: #fff; // White text
+  border-radius: 15px; // Rounded corners
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s; // Animation on hover
+
+  &:hover {
+    transform: scale(1.05); // Slightly enlarge on hover
+  }
+}

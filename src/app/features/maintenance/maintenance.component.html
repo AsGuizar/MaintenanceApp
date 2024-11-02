@@ -46,13 +46,23 @@
         </ion-item>
 
         <ion-item>
-          <ion-label position="floating">Reminder Date</ion-label>
+          <ion-label position="floating">Reminder date</ion-label>
           <ion-input type="date" [(ngModel)]="newTask.reminderDate" name="reminderDate" required></ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="floating">Task Date</ion-label>
+          <ion-label position="floating">Due Date</ion-label>
           <ion-input type="date" [(ngModel)]="newTask.date" name="date" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Frequency</ion-label>
+          <ion-select [(ngModel)]="newTask.frequency" name="frequency" required>
+            <ion-select-option value="unique">Unique</ion-select-option>
+            <ion-select-option value="weekly">Weekly</ion-select-option>
+            <ion-select-option value="monthly">Monthly</ion-select-option>
+            <ion-select-option value="annually">Annually</ion-select-option>
+          </ion-select>
         </ion-item>
 
         <ion-item>
@@ -62,6 +72,12 @@
             <ion-select-option value="in progress">In Progress</ion-select-option>
             <ion-select-option value="completed">Completed</ion-select-option>
           </ion-select>
+        </ion-item>
+
+        <!-- New File Input for Attachments -->
+        <ion-item>
+          <ion-label>Attach Photos/Documents</ion-label>
+          <ion-input type="file" (change)="onFileSelected($event)" accept="image/*,application/pdf"></ion-input>
         </ion-item>
 
         <ion-button expand="full" type="submit">{{ isEditing ? 'Update Task' : 'Add Task' }}</ion-button>
@@ -80,6 +96,8 @@
           <h3>Category: {{ task.category }}</h3>
           <p>Due: {{ task.date | date: 'shortDate' }}</p>
           <p>Status: {{ task.status }}</p>
+          <p>Frequency: {{ task.frequency }}</p> <!-- Display frequency -->
+          <p *ngIf="task.attachments">Attachments: {{ task.attachments }}</p> <!-- Display attachments -->
         </ion-label>
         <ion-buttons slot="end">
           <ion-button (click)="editTask(task)">Edit</ion-button>

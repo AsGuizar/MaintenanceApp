@@ -1,19 +1,50 @@
-<!-- src/app/features/home/home.component.html -->
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+    <ion-title>Maintenance App</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToReports()">
+        <ion-icon name="document"></ion-icon>
+      </ion-button>
+      <ion-button (click)="goToSettings()">
+        <ion-icon name="settings"></ion-icon>
+      </ion-button>
+      <ion-button (click)="goToMaintenance()">
+        <ion-icon name="construct"></ion-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-title>Home</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-button expand="full" (click)="maintenanceService.backupTasks()">Backup Tasks</ion-button>
-  
-  <ion-list>
-    <ion-item *ngFor="let task of maintenanceService.getTasks()">
-      <ion-label>{{ task.description }}</ion-label>
-    </ion-item>
-  </ion-list>
+<ion-content class="ion-padding">
+  <div class="greeting-message">
+    <h2>Welcome, {{ userName }}!</h2>
+    <p>Your maintenance tasks await! Keep everything running smoothly!</p> <!-- Charismatic message -->
+  </div>
+
+  <div class="task-container">
+    <ion-card *ngFor="let task of tasks" class="task-card">
+      <ion-card-header>
+        <ion-card-title>{{ task.description }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <h3>Category: {{ task.category }}</h3>
+        <p>Due: {{ task.date | date: 'shortDate' }}</p>
+        <p>Status: {{ task.status }}</p>
+        <p>Frequency: {{ task.frequency }}</p>
+
+        <!-- Display attachments if they exist -->
+        <div *ngIf="task.attachments && task.attachments.length > 0">
+          <h4>Attachments:</h4>
+          <ion-list>
+            <ion-item *ngFor="let attachment of task.attachments">
+              <ion-label>{{ attachment }}</ion-label>
+              <ion-thumbnail slot="start">
+                <img [src]="attachment" alt="Task Attachment" (click)="viewImage(attachment)" />
+              </ion-thumbnail>
+            </ion-item>
+          </ion-list>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>
