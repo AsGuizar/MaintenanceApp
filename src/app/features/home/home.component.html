@@ -1,0 +1,19 @@
+<!-- src/app/features/home/home.component.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Home</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-button expand="full" (click)="maintenanceService.backupTasks()">Backup Tasks</ion-button>
+  
+  <ion-list>
+    <ion-item *ngFor="let task of maintenanceService.getTasks()">
+      <ion-label>{{ task.description }}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
