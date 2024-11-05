@@ -37,10 +37,12 @@ export class MaintenanceService {
   }
 
   // Method to delete a task
-  deleteTask(taskId: string) {
-    this.tasks = this.tasks.filter(task => task.id !== taskId);
-    this.saveTasks();
-  }
+  // Method to delete a task
+  deleteTask(taskId: number) { // Change taskId to number
+  this.tasks = this.tasks.filter(task => task.id !== taskId); // Ensure comparison uses number
+  this.saveTasks();
+}
+
 
   saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(this.tasks));

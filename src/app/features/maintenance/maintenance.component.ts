@@ -1,7 +1,10 @@
+// src/app/features/maintenance/maintenance.component.ts
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MaintenanceService } from '../../core/services/maintenance.service';
 import { MaintenanceTask } from '../../models/maintenance.model';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-maintenance',
@@ -16,16 +19,21 @@ export class MaintenanceComponent {
     reminderDate: new Date(),
     date: new Date(),
     status: 'pending',
-    frequency: 'unique', // Default frequency
-    attachments: [] // Initialize attachments
+    frequency: 'unique',
+    attachments: []
   };
 
   public isEditing: boolean = false;
-  private currentTaskId: string = '';
+  private currentTaskId: number = 0;
   public selectedCategory: string = '';
   public isCustomCategory: boolean = false;
 
-  constructor(public maintenanceService: MaintenanceService, private router: Router) {}
+  constructor(
+    public maintenanceService: MaintenanceService,
+    private router: Router,
+    private localNotifications: LocalNotifications,
+    private notificationService: NotificationService
+  ) {}
 
   goHome() {
     this.router.navigate(['/home']);
@@ -41,15 +49,17 @@ export class MaintenanceComponent {
 
   onCategoryChange() {
     this.isCustomCategory = this.selectedCategory === 'Other';
-    if (!this.isCustomCategory) {
-      this.newTask.category = this.selectedCategory;
-    } else {
-      this.newTask.category = '';
-    }
+    this.newTask.category = this.isCustomCategory ? '' : this.selectedCategory;
   }
 
   addTask() {
+    // Ensure the reminder date is in the future
+    if (new Date(this.newTask.reminderDate) <= new Date()) {
+      console.error('Reminder date must be in the future.');
+      return;
+    }
     this.maintenanceService.addTask(this.newTask);
+    this.scheduleNotification(this.newTask);
     this.resetTask();
   }
 
@@ -62,14 +72,21 @@ export class MaintenanceComponent {
   }
 
   updateTask() {
+    this.localNotifications.cancel(this.currentTaskId);
     this.maintenanceService.updateTask(this.newTask);
+    this.scheduleNotification(this.newTask);
     this.resetTask();
   }
 
-  deleteTask(taskId: string) {
-    this.maintenanceService.deleteTask(taskId);
-  }
-
+ deleteTask(taskId: number) {
+  this.maintenanceService.deleteTask(taskId);
+  this.localNotifications.cancel(taskId.toString()); // Convert taskId to string before passing
+  this.notificationService.scheduleNotification(
+    'Maintenance Reminder Cancelled',
+    `Reminder for task ID ${taskId.toString()} has been cancelled.`,
+    { at: new Date() } // Notify at the current time
+  );
+}
   resetTask() {
     this.newTask = {
       id: this.generateId(),
@@ -78,23 +95,33 @@ export class MaintenanceComponent {
       reminderDate: new Date(),
       date: new Date(),
       status: 'pending',
-      frequency: 'unique', // Reset frequency to default
-      attachments: [] // Reset attachments
+      frequency: 'unique',
+      attachments: []
     };
     this.selectedCategory = '';
     this.isEditing = false;
-    this.currentTaskId = '';
+    this.currentTaskId = 0; 
   }
 
   onFileSelected(event: Event) {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files) {
       const files = Array.from(fileInput.files);
-      this.newTask.attachments = files.map(file => file.name); // Store file names
+      this.newTask.attachments = files.map(file => file.name);
     }
   }
 
-  private generateId(): string {
-    return Math.random().toString(36).substr(2, 9);
+  private generateId(): number {
+    return Math.floor(Math.random() * 1000000);
+  }
+
+  private scheduleNotification(task: MaintenanceTask) {
+    this.localNotifications.schedule({
+      id: task.id,
+      title: 'Maintenance Reminder',
+      text: `Reminder for: ${task.description}`,
+      trigger: { at: new Date(task.reminderDate) },
+      foreground: true
+    });
   }
 }

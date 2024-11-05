@@ -10,6 +10,9 @@
       <ion-button (click)="goToSettings()">
         <ion-icon name="settings-outline"></ion-icon>
       </ion-button>
+      <ion-button (click)="goToMaintenance()">
+        <ion-icon name="construct-outline"></ion-icon> 
+      </ion-button> 
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -23,7 +26,20 @@
     <ion-label>End Date</ion-label>
     <ion-input type="date" [(ngModel)]="endDate"></ion-input>
   </ion-item>
+  <ion-item>
+   <ion-label position="floating">Category</ion-label>
+    <ion-select [(ngModel)]="selectedCategory" name="categorySelect" (ionChange)="generateReport()">
+      <ion-select-option value="">All Categories</ion-select-option> <!-- Option for all categories -->
+      <ion-select-option value="House">House</ion-select-option>
+      <ion-select-option value="Pets">Pets</ion-select-option>
+      <ion-select-option value="Health">Health</ion-select-option>
+      <ion-select-option value="Vehicles">Vehicles</ion-select-option>
+      <ion-select-option value="Other">Other</ion-select-option>
+    </ion-select>
+  </ion-item>
   <ion-button expand="full" (click)="generateReport()">Generate Report</ion-button>
+  <ion-button expand="full" (click)="downloadReportAsJson()">Download Report as JSON</ion-button>
+
 
   <ion-card *ngIf="addedTasks.length || inProgressTasks.length || finishedTasks.length">
     <ion-card-header>

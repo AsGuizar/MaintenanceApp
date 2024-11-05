@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx'; // Import Local Notifications
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -33,7 +34,8 @@ import { SettingsComponent } from './features/settings/settings.component'; // E
   providers: [
     AuthGuard,
     AuthService,
-    MaintenanceService
+    MaintenanceService,
+    LocalNotifications // Add LocalNotifications to providers
   ],
   bootstrap: [AppComponent]
 })

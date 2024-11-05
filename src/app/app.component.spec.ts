@@ -1,21 +1,26 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { Component } from '@angular/core';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx'; // Import Local Notifications
+import { Platform } from '@ionic/angular';
 
-import { AppComponent } from './app.component';
+@Component({
+  selector: 'app-root',
+  templateUrl: 'app.component.html',
+  styleUrls: ['app.component.scss'],
+})
+export class AppComponent {
+  constructor(private localNotifications: LocalNotifications, private platform: Platform) {
+    this.platform.ready().then(() => {
+      this.requestPermissions();
+    });
+  }
 
-describe('AppComponent', () => {
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [AppComponent],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    }).compileComponents();
-  });
-
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-});
+  private requestPermissions() {
+    this.localNotifications.requestPermission().then(granted => {
+      if (granted) {
+        console.log('Permission granted for notifications');
+      } else {
+        console.log('Permission denied for notifications');
+      }
+    });
+  }
+}
