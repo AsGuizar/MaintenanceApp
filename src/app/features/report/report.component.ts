@@ -16,7 +16,7 @@ export class ReportComponent implements OnInit {
   addedTasks: MaintenanceTask[] = [];
   inProgressTasks: MaintenanceTask[] = [];
   finishedTasks: MaintenanceTask[] = [];
-  selectedCategory: string = ''; // Ensure you have this property
+  selectedCategory: string = '';
 
   constructor(private maintenanceService: MaintenanceService, private router: Router) {}
 
@@ -49,24 +49,6 @@ export class ReportComponent implements OnInit {
         (this.selectedCategory === '' || task.category === this.selectedCategory)
       );
     }
-  }
-
-  downloadReportAsJson() {
-    const reportData = {
-      addedTasks: this.addedTasks,
-      inProgressTasks: this.inProgressTasks,
-      finishedTasks: this.finishedTasks,
-    };
-
-    const json = JSON.stringify(reportData, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'maintenance_report.json';
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   }
 
   goHome() {

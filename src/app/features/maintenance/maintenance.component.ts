@@ -1,4 +1,3 @@
-// src/app/features/maintenance/maintenance.component.ts
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MaintenanceService } from '../../core/services/maintenance.service';
@@ -27,6 +26,7 @@ export class MaintenanceComponent {
   private currentTaskId: number = 0;
   public selectedCategory: string = '';
   public isCustomCategory: boolean = false;
+  public expandedTaskId: number | null = null; // Track which task is expanded
 
   constructor(
     public maintenanceService: MaintenanceService,
@@ -78,15 +78,16 @@ export class MaintenanceComponent {
     this.resetTask();
   }
 
- deleteTask(taskId: number) {
-  this.maintenanceService.deleteTask(taskId);
-  this.localNotifications.cancel(taskId.toString()); // Convert taskId to string before passing
-  this.notificationService.scheduleNotification(
-    'Maintenance Reminder Cancelled',
-    `Reminder for task ID ${taskId.toString()} has been cancelled.`,
-    { at: new Date() } // Notify at the current time
-  );
-}
+  deleteTask(taskId: number) {
+    this.maintenanceService.deleteTask(taskId);
+    this.localNotifications.cancel(taskId.toString()); // Convert taskId to string before passing
+    this.notificationService.scheduleNotification(
+      'Maintenance Reminder Cancelled',
+      `Reminder for task ID ${taskId.toString()} has been cancelled.`,
+      { at: new Date() } // Notify at the current time
+    );
+  }
+
   resetTask() {
     this.newTask = {
       id: this.generateId(),
@@ -100,7 +101,7 @@ export class MaintenanceComponent {
     };
     this.selectedCategory = '';
     this.isEditing = false;
-    this.currentTaskId = 0; 
+    this.currentTaskId = 0;
   }
 
   onFileSelected(event: Event) {
@@ -109,6 +110,10 @@ export class MaintenanceComponent {
       const files = Array.from(fileInput.files);
       this.newTask.attachments = files.map(file => file.name);
     }
+  }
+
+  toggleTaskDetails(task: MaintenanceTask) {
+    this.expandedTaskId = this.expandedTaskId === task.id ? null : task.id; // Toggle task details
   }
 
   private generateId(): number {

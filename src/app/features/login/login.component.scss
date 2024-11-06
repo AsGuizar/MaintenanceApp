@@ -1,0 +1,73 @@
+ion-header {
+    background-color: #1c1c1c; // Fondo oscuro para el encabezado
+    color: #ffffff; // Texto blanco para contraste
+  
+    ion-toolbar {
+      ion-title {
+        font-size: 1.5rem; // Tamaño de fuente para el título
+        font-weight: bold; // Título en negrita
+        text-align: center; // Centrar el título
+      }
+    }
+  }
+  
+  ion-content {
+    --background: #121212; // Fondo oscuro para el contenido
+    color: #e0e0e0; // Texto gris claro para mayor legibilidad
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    form {
+      width: 90%; // Ancho del formulario en dispositivos móviles
+      max-width: 400px; // Máximo ancho para mantener el diseño compacto
+      padding: 16px;
+      border-radius: 8px; // Bordes redondeados
+      background-color: #2a2a2a; // Fondo oscuro para el formulario
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); // Sombra para dar profundidad
+  
+      ion-item {
+        --background: transparent; // Fondo transparente para los ítems
+        color: #e0e0e0;
+  
+        ion-label {
+          color: #b0b0b0; // Texto gris claro en etiquetas
+        }
+  
+        ion-input {
+          color: #ffffff; // Texto blanco en el campo de entrada
+        }
+      }
+  
+      ion-button {
+        margin-top: 20px; // Espacio superior para el botón de submit
+        background-color: #00bcd4; // Color de fondo del botón
+        color: #fff; // Texto blanco en el botón
+        border-radius: 8px; // Bordes ligeramente redondeados
+        font-weight: bold; // Texto en negrita
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); // Sombra para destacar el botón
+        width: 100%; // Ancho completo para adaptarse a móvil
+  
+        &:hover {
+          background-color: darken(#00bcd4, 10%); // Color más oscuro al hacer hover
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7); // Sombra aumentada en hover
+        }
+      }
+    }
+  
+    .toggle-register-btn {
+      margin-top: 10px; // Espacio superior
+      background-color: #3a3a3a; // Fondo oscuro para el botón de registro
+      color: #e0e0e0; // Texto gris claro
+      border-radius: 8px;
+      font-size: 0.9rem; // Tamaño de fuente más pequeño para botón de alternar
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      
+      &:hover {
+        background-color: darken(#3a3a3a, 10%);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+      }
+    }
+  }
+  

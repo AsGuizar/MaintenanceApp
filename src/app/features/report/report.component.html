@@ -38,8 +38,6 @@
     </ion-select>
   </ion-item>
   <ion-button expand="full" (click)="generateReport()">Generate Report</ion-button>
-  <ion-button expand="full" (click)="downloadReportAsJson()">Download Report as JSON</ion-button>
-
 
   <ion-card *ngIf="addedTasks.length || inProgressTasks.length || finishedTasks.length">
     <ion-card-header>

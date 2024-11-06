@@ -1,4 +1,5 @@
 // src/app/features/settings/settings.component.ts
+//Comentario para subir las actualizaciones de rxjs xd
 import { Component } from '@angular/core';
 
 @Component({

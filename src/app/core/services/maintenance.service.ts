@@ -6,7 +6,7 @@ import { MaintenanceTask } from '../../models/maintenance.model';
   providedIn: 'root',
 })
 export class MaintenanceService {
-  private tasks: MaintenanceTask[] = [];
+  public tasks: MaintenanceTask[] = [];
 
   constructor() {
     this.loadTasks();

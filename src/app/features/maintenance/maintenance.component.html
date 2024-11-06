@@ -1,109 +1,96 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="goHome()">
-        <ion-icon name="home-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>Maintenance Tasks</ion-title>
+    <ion-title>Maintenance</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="goToSettings()">
-        <ion-icon name="settings-outline"></ion-icon>
-      </ion-button>
-      <ion-button (click)="goToReports()">
-        <ion-icon name="document-text-outline"></ion-icon>
-      </ion-button>
+      <ion-button (click)="goToReports()">Reports</ion-button>
+      <ion-button (click)="goToSettings()">Settings</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <form (ngSubmit)="isEditing ? updateTask() : addTask()" #taskForm="ngForm">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>{{ isEditing ? 'Edit Task' : 'Add New Task' }}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-item>
-          <ion-label position="floating">Description</ion-label>
-          <ion-input type="text" [(ngModel)]="newTask.description" name="description" required></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Category</ion-label>
-          <ion-select [(ngModel)]="selectedCategory" name="categorySelect" (ionChange)="onCategoryChange()">
-            <ion-select-option value="House">House</ion-select-option>
-            <ion-select-option value="Pets">Pets</ion-select-option>
-            <ion-select-option value="Health">Health</ion-select-option>
-            <ion-select-option value="Vehicles">Vehicles</ion-select-option>
-            <ion-select-option value="Other">Other</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item *ngIf="isCustomCategory">
-          <ion-label position="floating">Custom Category</ion-label>
-          <ion-input type="text" [(ngModel)]="newTask.category" name="customCategory" placeholder="Enter custom category"></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Reminder date</ion-label>
-          <ion-input type="date" [(ngModel)]="newTask.reminderDate" name="reminderDate" required></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Due Date</ion-label>
-          <ion-input type="date" [(ngModel)]="newTask.date" name="date" required></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>Frequency</ion-label>
-          <ion-select [(ngModel)]="newTask.frequency" name="frequency" required>
-            <ion-select-option value="unique">Unique</ion-select-option>
-            <ion-select-option value="weekly">Weekly</ion-select-option>
-            <ion-select-option value="monthly">Monthly</ion-select-option>
-            <ion-select-option value="annually">Annually</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>Status</ion-label>
-          <ion-select [(ngModel)]="newTask.status" name="status" required>
-            <ion-select-option value="pending">Pending</ion-select-option>
-            <ion-select-option value="in progress">In Progress</ion-select-option>
-            <ion-select-option value="completed">Completed</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <!-- New File Input for Attachments -->
-        <ion-item>
-          <ion-label>Attach Photos/Documents</ion-label>
-          <ion-input type="file" (change)="onFileSelected($event)" accept="image/*,application/pdf"></ion-input>
-        </ion-item>
-
-        <ion-button expand="full" type="submit">{{ isEditing ? 'Update Task' : 'Add Task' }}</ion-button>
-      </ion-card-content>
-    </ion-card>
-  </form>
-
-  <ion-card class="task-list">
+<ion-content>
+  <!-- Add new task form -->
+  <ion-card>
     <ion-card-header>
-      <ion-card-title>Current Tasks</ion-card-title>
+      <ion-card-title>Add New Task</ion-card-title>
     </ion-card-header>
-    <ion-list>
-      <ion-item *ngFor="let task of maintenanceService.getTasks()">
+    <ion-card-content>
+      <!-- Input fields for task details -->
+      <ion-item>
+        <ion-label>Description</ion-label>
+        <ion-input [(ngModel)]="newTask.description"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Category</ion-label>
+        <ion-select [(ngModel)]="selectedCategory" (ionChange)="onCategoryChange()">
+          <ion-select-option value="House">House</ion-select-option>
+          <ion-select-option value="Pets">Pets</ion-select-option>
+          <ion-select-option value="Health">Health</ion-select-option>
+          <ion-select-option value="Vehicles">Vehicles</ion-select-option>
+          <ion-select-option value="Other">Other</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Reminder Date</ion-label>
+        <ion-datetime [(ngModel)]="newTask.reminderDate"></ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Due Date</ion-label>
+        <ion-datetime [(ngModel)]="newTask.date"></ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Frequency</ion-label>
+        <ion-input [(ngModel)]="newTask.frequency"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Status</ion-label>
+        <ion-input [(ngModel)]="newTask.status"></ion-input>
+      </ion-item>
+
+      <!-- Add Attachments -->
+      <ion-item>
+        <input type="file" (change)="onFileSelected($event)" multiple />
+      </ion-item>
+
+      <ion-button expand="full" (click)="addTask()">Add Task</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Task List -->
+  <ion-list>
+    <ng-container *ngFor="let task of maintenanceService.tasks">
+      <ion-item (click)="toggleTaskDetails(task)">
         <ion-label>
           <h2>{{ task.description }}</h2>
-          <h3>Category: {{ task.category }}</h3>
-          <p>Due: {{ task.date | date: 'shortDate' }}</p>
-          <p>Status: {{ task.status }}</p>
-          <p>Frequency: {{ task.frequency }}</p> <!-- Display frequency -->
-          <p *ngIf="task.attachments">Attachments: {{ task.attachments }}</p> <!-- Display attachments -->
+          <p>{{ task.status | titlecase }}</p>
         </ion-label>
-        <ion-buttons slot="end">
-          <ion-button (click)="editTask(task)">Edit</ion-button>
-          <ion-button (click)="deleteTask(task.id)">Delete</ion-button>
-        </ion-buttons>
+        <ion-button slot="end" (click)="toggleTaskDetails(task)">Toggle Details</ion-button>
       </ion-item>
-    </ion-list>
-  </ion-card>
+
+      <!-- Task Details -->
+      <ion-item *ngIf="expandedTaskId === task.id">
+        <ion-label>
+          <p>Details for task: {{ task.description }}</p>
+          <p>Reminder: {{ task.reminderDate | date: 'shortDate' }}</p>
+          <p>Due Date: {{ task.date | date: 'shortDate' }}</p>
+          <p>Frequency: {{ task.frequency | titlecase }}</p>
+          <p>Status: {{ task.status | titlecase }}</p>
+          <p>Category: {{ task.category | titlecase }}</p>
+
+          <!-- Attachments -->
+          <div *ngIf="task.attachments && task.attachments.length > 0">
+            <p>Attachments:</p>
+            <ul>
+              <li *ngFor="let attachment of task.attachments">{{ attachment }}</li>
+            </ul>
+          </div>
+        </ion-label>
+      </ion-item>
+    </ng-container>
+  </ion-list>
 </ion-content>
