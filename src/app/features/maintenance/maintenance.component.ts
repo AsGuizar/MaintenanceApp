@@ -53,7 +53,6 @@ export class MaintenanceComponent {
   }
 
   addTask() {
-    // Ensure the reminder date is in the future
     if (new Date(this.newTask.reminderDate) <= new Date()) {
       console.error('Reminder date must be in the future.');
       return;
@@ -65,27 +64,21 @@ export class MaintenanceComponent {
 
   editTask(task: MaintenanceTask) {
     this.isEditing = true;
-    this.currentTaskId = task.id;
-    this.newTask = { ...task };
-    this.selectedCategory = task.category;
-    this.isCustomCategory = this.selectedCategory === 'Other';
+    this.currentTaskId = task.id;  // Keep track of the task being edited
+    this.newTask = { ...task };    // Copy task details to form
+    this.selectedCategory = task.category;  // Set the selected category
+    this.isCustomCategory = this.selectedCategory === 'Other';  // Handle custom category
   }
 
   updateTask() {
+    if (new Date(this.newTask.reminderDate) <= new Date()) {
+      console.error('Reminder date must be in the future.');
+      return;
+    }
     this.localNotifications.cancel(this.currentTaskId);
-    this.maintenanceService.updateTask(this.newTask);
-    this.scheduleNotification(this.newTask);
-    this.resetTask();
-  }
-
-  deleteTask(taskId: number) {
-    this.maintenanceService.deleteTask(taskId);
-    this.localNotifications.cancel(taskId.toString()); // Convert taskId to string before passing
-    this.notificationService.scheduleNotification(
-      'Maintenance Reminder Cancelled',
-      `Reminder for task ID ${taskId.toString()} has been cancelled.`,
-      { at: new Date() } // Notify at the current time
-    );
+    this.maintenanceService.updateTask(this.newTask);  // Update the existing task
+    this.scheduleNotification(this.newTask);  // Reschedule notification after update
+    this.resetTask();  // Reset form
   }
 
   resetTask() {
@@ -104,6 +97,16 @@ export class MaintenanceComponent {
     this.currentTaskId = 0;
   }
 
+  deleteTask(taskId: number) {
+    this.maintenanceService.deleteTask(taskId);
+    this.localNotifications.cancel(taskId.toString());
+    this.notificationService.scheduleNotification(
+      'Maintenance Reminder Cancelled',
+      `Reminder for task ID ${taskId.toString()} has been cancelled.`,
+      { at: new Date() }
+    );
+  }
+
   onFileSelected(event: Event) {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files) {
@@ -112,8 +115,9 @@ export class MaintenanceComponent {
     }
   }
 
+  // Toggle the task details when clicked
   toggleTaskDetails(task: MaintenanceTask) {
-    this.expandedTaskId = this.expandedTaskId === task.id ? null : task.id; // Toggle task details
+    this.expandedTaskId = this.expandedTaskId === task.id ? null : task.id;
   }
 
   private generateId(): number {

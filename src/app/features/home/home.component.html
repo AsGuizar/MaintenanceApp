@@ -1,50 +1,62 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Maintenance App</ion-title>
+    <ion-title>Home Maintenance</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="goToReports()">
-        <ion-icon name="document"></ion-icon>
-      </ion-button>
       <ion-button (click)="goToSettings()">
-        <ion-icon name="settings"></ion-icon>
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
       </ion-button>
-      <ion-button (click)="goToMaintenance()">
-        <ion-icon name="construct"></ion-icon>
+      <ion-button (click)="goToReports()">
+        <ion-icon slot="icon-only" name="analytics-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div class="greeting-message">
-    <h2>Welcome, {{ userName }}!</h2>
-    <p>Your maintenance tasks await! Keep everything running smoothly!</p> <!-- Charismatic message -->
-  </div>
+<ion-content>
+  <!-- Task Filter Section -->
+  <ion-segment [(ngModel)]="selectedCategory" (ionChange)="filterTasks()">
+    <ion-segment-button value="all">All</ion-segment-button>
+    <ion-segment-button value="home">Home</ion-segment-button>
+    <ion-segment-button value="vehicle">Vehicle</ion-segment-button>
+    <ion-segment-button value="health">Health</ion-segment-button>
+    <ion-segment-button value="pets">Pets</ion-segment-button>
+  </ion-segment>
 
-  <div class="task-container">
-    <ion-card *ngFor="let task of tasks" class="task-card">
-      <ion-card-header>
-        <ion-card-title>{{ task.description }}</ion-card-title>
-      </ion-card-header>
+  <!-- Task List Section -->
+  <ion-list *ngFor="let task of filteredTasks">
+    <ion-item-sliding>
+      <ion-item (click)="toggleTaskDetails(task)">
+        <ion-label>
+          <h2>{{ task.description }}</h2>
+          <p>Due: {{ task.reminderDate | date: 'short' }}</p>
+        </ion-label>
+        <ion-icon name="checkmark-circle-outline" *ngIf="task.status === 'completed'" slot="end"></ion-icon>
+      </ion-item>
+
+      <!-- Task Actions -->
+      <ion-item-options side="end">
+        <ion-item-option color="primary" (click)="editTask(task)">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="deleteTask(task.id)">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <!-- Task Details -->
+    <ion-card *ngIf="expandedTaskId === task.id">
       <ion-card-content>
-        <h3>Category: {{ task.category }}</h3>
-        <p>Due: {{ task.date | date: 'shortDate' }}</p>
-        <p>Status: {{ task.status }}</p>
-        <p>Frequency: {{ task.frequency }}</p>
-
-        <!-- Display attachments if they exist -->
-        <div *ngIf="task.attachments && task.attachments.length > 0">
-          <h4>Attachments:</h4>
-          <ion-list>
-            <ion-item *ngFor="let attachment of task.attachments">
-              <ion-label>{{ attachment }}</ion-label>
-              <ion-thumbnail slot="start">
-                <img [src]="attachment" alt="Task Attachment" (click)="viewImage(attachment)" />
-              </ion-thumbnail>
-            </ion-item>
-          </ion-list>
-        </div>
+        <p>{{ task.description }}</p>
+        <ion-button (click)="markAsCompleted(task)">Mark as Completed</ion-button>
       </ion-card-content>
     </ion-card>
-  </div>
+  </ion-list>
+
+  <!-- Add New Task Button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="goToMaintenance()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

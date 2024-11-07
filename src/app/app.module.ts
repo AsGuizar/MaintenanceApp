@@ -1,4 +1,3 @@
-// src/app/app.module.ts - Main module of the app
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicModule } from '@ionic/angular';
@@ -27,7 +26,7 @@ import { SettingsComponent } from './features/settings/settings.component'; // E
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(),
+    IonicModule.forRoot(), // This should work for pickers as well
     AppRoutingModule,
     FormsModule
   ],

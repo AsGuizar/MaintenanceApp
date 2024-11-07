@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header> 
   <ion-toolbar>
     <ion-title>Maintenance</ion-title>
     <ion-buttons slot="end">
@@ -9,13 +9,12 @@
 </ion-header>
 
 <ion-content>
-  <!-- Add new task form -->
+  <!-- Add New Task Form -->
   <ion-card>
     <ion-card-header>
-      <ion-card-title>Add New Task</ion-card-title>
+      <ion-card-title>{{ isEditing ? 'Edit Task' : 'Add New Task' }}</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <!-- Input fields for task details -->
       <ion-item>
         <ion-label>Description</ion-label>
         <ion-input [(ngModel)]="newTask.description"></ion-input>
@@ -44,20 +43,30 @@
 
       <ion-item>
         <ion-label>Frequency</ion-label>
-        <ion-input [(ngModel)]="newTask.frequency"></ion-input>
+        <ion-select [(ngModel)]="newTask.frequency">
+          <ion-select-option value="unique">Unique</ion-select-option>
+          <ion-select-option value="weekly">Weekly</ion-select-option>
+          <ion-select-option value="monthly">Monthly</ion-select-option>
+          <ion-select-option value="annually">Annually</ion-select-option>
+        </ion-select>
       </ion-item>
 
       <ion-item>
         <ion-label>Status</ion-label>
-        <ion-input [(ngModel)]="newTask.status"></ion-input>
+        <ion-select [(ngModel)]="newTask.status">
+          <ion-select-option value="pending">Pending</ion-select-option>
+          <ion-select-option value="in progress">In Progress</ion-select-option>
+          <ion-select-option value="completed">Completed</ion-select-option>
+        </ion-select>
       </ion-item>
 
-      <!-- Add Attachments -->
       <ion-item>
         <input type="file" (change)="onFileSelected($event)" multiple />
       </ion-item>
 
-      <ion-button expand="full" (click)="addTask()">Add Task</ion-button>
+      <ion-button expand="full" (click)="isEditing ? updateTask() : addTask()">
+        {{ isEditing ? 'Update Task' : 'Add Task' }}
+      </ion-button>
     </ion-card-content>
   </ion-card>
 
@@ -69,10 +78,9 @@
           <h2>{{ task.description }}</h2>
           <p>{{ task.status | titlecase }}</p>
         </ion-label>
-        <ion-button slot="end" (click)="toggleTaskDetails(task)">Toggle Details</ion-button>
       </ion-item>
 
-      <!-- Task Details -->
+      <!-- Task Details: Show when task is expanded -->
       <ion-item *ngIf="expandedTaskId === task.id">
         <ion-label>
           <p>Details for task: {{ task.description }}</p>
@@ -89,6 +97,12 @@
               <li *ngFor="let attachment of task.attachments">{{ attachment }}</li>
             </ul>
           </div>
+
+          <!-- Edit and Delete Buttons -->
+          <ion-buttons>
+            <ion-button color="primary" (click)="editTask(task)">Edit</ion-button>
+            <ion-button color="danger" (click)="deleteTask(task.id)">Delete</ion-button>
+          </ion-buttons>
         </ion-label>
       </ion-item>
     </ng-container>

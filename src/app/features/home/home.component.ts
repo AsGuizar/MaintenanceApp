@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router'; // Import Router
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { MaintenanceService } from '../../core/services/maintenance.service';
-import { AuthService } from '../../core/services/auth.service'; // Import AuthService
+import { NotificationService } from '../../core/services/notification.service';
 import { MaintenanceTask } from '../../models/maintenance.model';
 
 @Component({
@@ -9,43 +9,83 @@ import { MaintenanceTask } from '../../models/maintenance.model';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
-  public userName: string; // Declare userName
-  public tasks: MaintenanceTask[] = []; // Array to hold maintenance tasks
+export class HomeComponent implements OnInit {
+  public tasks: MaintenanceTask[] = [];
+  public filteredTasks: MaintenanceTask[] = [];
+  public selectedCategory: string = 'all';
+  public expandedTaskId: number | null = null;
 
   constructor(
-    public maintenanceService: MaintenanceService,
-    private authService: AuthService, // Inject AuthService
-    private router: Router
-  ) {
-    this.userName = this.authService.getUserName(); // Get user name from AuthService
-    this.loadTasks(); // Load tasks when the component is initialized
+    private router: Router,
+    private maintenanceService: MaintenanceService,
+    private notificationService: NotificationService
+  ) {}
+
+  ngOnInit() {
+    this.loadTasks();
   }
 
+  // Load tasks and set notifications
   loadTasks() {
-    this.tasks = this.maintenanceService.getTasks(); // Load tasks from the maintenance service
+    this.tasks = this.maintenanceService.getTasks();
+    this.filterTasks();
+    this.scheduleUpcomingNotifications();
   }
 
-  // Navigation methods
-  goToReports() {
-    this.router.navigate(['../report']); // Navigate to the reports page
+  // Filter tasks based on selected category
+  filterTasks() {
+    this.filteredTasks = this.selectedCategory === 'all'
+      ? this.tasks
+      : this.tasks.filter(task => task.category === this.selectedCategory);
+  }
+
+  // Schedule notifications for upcoming tasks
+  scheduleUpcomingNotifications() {
+    const now = new Date();
+    this.tasks.forEach(task => {
+      if (new Date(task.reminderDate) > now) {
+        this.notificationService.scheduleNotification(
+          'Upcoming Task',
+          `Don't forget to: ${task.description}`,
+          { at: new Date(task.reminderDate) }
+        );
+      }
+    });
+  }
+
+  // Toggle task details view
+  toggleTaskDetails(task: MaintenanceTask) {
+    this.expandedTaskId = this.expandedTaskId === task.id ? null : task.id;
+  }
+
+  // Navigate to Maintenance component to add new tasks
+  goToMaintenance() {
+    this.router.navigate(['/maintenance']);
   }
 
   goToSettings() {
-    this.router.navigate(['../settings']); // Navigate to the settings page
+    this.router.navigate(['/settings']);
   }
 
-  goToMaintenance() {
-    this.router.navigate(['../maintenance']); // Navigate to the maintenance page
+  goToReports() {
+    this.router.navigate(['/report']);
   }
 
-  openAttachment(attachment: string) {
-    // Open the attachment in a new tab/window
-    window.open(attachment, '_blank'); // This opens the attachment in a new tab
+  // Mark task as completed
+  markAsCompleted(task: MaintenanceTask) {
+    task.status = 'completed';
+    this.maintenanceService.updateTask(task);
+    this.loadTasks();
   }
 
-  viewImage(imageSrc: string) {
-    // Open the image in a larger view (in a modal or a new tab)
-    window.open(imageSrc, '_blank'); // Opens the image in a new tab
+  // Edit task
+  editTask(task: MaintenanceTask) {
+    this.router.navigate(['/maintenance'], { state: { task } });
+  }
+
+  // Delete task
+  deleteTask(taskId: number) {
+    this.maintenanceService.deleteTask(taskId);
+    this.loadTasks();
   }
 }
