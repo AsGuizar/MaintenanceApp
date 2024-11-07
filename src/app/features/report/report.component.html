@@ -41,6 +41,12 @@
     </ion-select>
   </ion-item>
 
+  <!-- File Name Customization -->
+  <ion-item>
+    <ion-label>Report File Name</ion-label>
+    <ion-input type="text" [(ngModel)]="fileName" placeholder="Enter custom file name"></ion-input>
+  </ion-item>
+
   <!-- Error message for invalid dates -->
   <ion-item *ngIf="dateError">
     <ion-label color="danger">Please select a valid start and end date!</ion-label>
@@ -48,6 +54,14 @@
 
   <!-- Generate Report Button -->
   <ion-button expand="full" (click)="generateReport()">Generate Report</ion-button>
+
+  <!-- Download Report Button -->
+  <ion-button expand="full" (click)="downloadReport()" [disabled]="isLoading">
+    <ion-icon name="download"></ion-icon> Download Report
+  </ion-button>
+
+  <!-- Loading Spinner -->
+  <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
 
   <!-- Report Display -->
   <ion-card *ngIf="addedTasks.length || inProgressTasks.length || finishedTasks.length">

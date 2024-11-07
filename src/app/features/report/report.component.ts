@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MaintenanceService } from '../../core/services/maintenance.service';
 import { MaintenanceTask } from '../../models/maintenance.model';
 import { Router } from '@angular/router';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 @Component({
   selector: 'app-report',
@@ -18,6 +19,8 @@ export class ReportComponent implements OnInit {
   finishedTasks: MaintenanceTask[] = [];
   selectedCategory: string = '';
   dateError: boolean = false;
+  fileName: string = 'Maintenance_Report'; // Default file name
+  isLoading: boolean = false; // Loading state for feedback
 
   constructor(private maintenanceService: MaintenanceService, private router: Router) {}
 
@@ -77,6 +80,52 @@ export class ReportComponent implements OnInit {
     );
   }
 
+  // Method to download the report as CSV using Capacitor's Filesystem
+  async downloadReport() {
+    let csvContent = 'Description,Status,Due Date,Category\n';
+  
+    // Combine all tasks for the report
+    const allTasks = [...this.addedTasks, ...this.inProgressTasks, ...this.finishedTasks];
+  
+    allTasks.forEach(task => {
+      // Escape the commas and quotes in the task description to ensure valid CSV formatting
+      const description = task.description.replace(/"/g, '""'); // Escape double quotes
+      const row = `"${description}",${task.status},"${task.date}","${task.category}"`; // Quote values
+      csvContent += row + '\n';
+    });
+  
+    // Show loading spinner
+    this.isLoading = true;
+  
+    // Generate a custom file name based on the selected date range or other logic
+    const customFileName = `${this.fileName}_${this.startDate}_${this.endDate}.csv`;
+  
+    try {
+      // Add BOM (Byte Order Mark) for UTF-8 encoding to ensure compatibility with Excel
+      const bom = '\uFEFF'; // BOM for UTF-8
+      const csvWithBOM = bom + csvContent;
+  
+      // Write the CSV file to the device's documents directory
+      await Filesystem.writeFile({
+        path: customFileName,
+        data: csvWithBOM,
+        directory: Directory.Documents,
+        encoding: Encoding.UTF8,
+      });
+  
+      // Hide loading spinner and notify the user
+      this.isLoading = false;
+      alert('Report downloaded successfully!');
+    } catch (error) {
+      // Hide loading spinner and show error
+      this.isLoading = false;
+      console.error('Error writing file', error);
+      alert('Failed to download report. Please try again.');
+    }
+  }
+  
+
+  // Navigation methods
   goHome() {
     this.router.navigate(['/home']);
   }
