@@ -39,6 +39,11 @@ export class MaintenanceComponent {
     this.router.navigate(['/home']);
   }
 
+  goToHome() {
+    this.router.navigate(['/home']);
+  }
+  
+
   goToSettings() {
     this.router.navigate(['../settings']);
   }
