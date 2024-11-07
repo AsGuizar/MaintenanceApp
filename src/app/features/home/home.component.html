@@ -13,7 +13,7 @@
 </ion-header>
 
 <ion-content color="medium" class="ion-padding">
-
+  
   <!-- Personalized Greeting -->
   <div class="greeting">
     <h2>Hi, {{ username }}!</h2>
@@ -26,28 +26,66 @@
     </ion-card-header>
     <ion-card-content class="task-status">
       <div class="status-indicator">
+        <!-- Pending Tasks Button -->
         <ion-button fill="clear" color="warning" (click)="togglePendingTasks()">
           <ion-icon name="alert-circle-outline"></ion-icon> Pending
           <ion-badge color="warning">{{ pendingTasks.length }}</ion-badge>
         </ion-button>
-        <ion-button fill="clear" color="tertiary" (click)="showInProgressTasks()">
+        <!-- In Progress Tasks Button -->
+        <ion-button fill="clear" color="tertiary" (click)="toggleInProgressTasks()">
           <ion-icon name="time-outline"></ion-icon> In Progress
           <ion-badge color="tertiary">{{ inProgressTasks.length }}</ion-badge>
         </ion-button>
-        <ion-button fill="clear" color="success" (click)="showCompletedTasks()">
+        <!-- Completed Tasks Button -->
+        <ion-button fill="clear" color="success" (click)="toggleCompletedTasks()">
           <ion-icon name="checkmark-done-outline"></ion-icon> Completed
           <ion-badge color="success">{{ completedTasks.length }}</ion-badge>
         </ion-button>
       </div>
+
       <!-- Dropdown for Pending Tasks -->
       <ion-list *ngIf="showPending">
-        <ion-item *ngFor="let task of pendingTasks">
+        <ion-item *ngFor="let task of pendingTasks" (click)="selectTask(task)" [color]="'warning'">
+          <ion-label>{{ task.description }}</ion-label>
+          <ion-note slot="end">{{ task.date | date: 'shortDate' }}</ion-note>
+        </ion-item>
+      </ion-list>
+
+      <!-- Dropdown for In Progress Tasks -->
+      <ion-list *ngIf="showInProgress">
+        <ion-item *ngFor="let task of inProgressTasks" (click)="selectTask(task)" [color]="'tertiary'">
+          <ion-label>{{ task.description }}</ion-label>
+          <ion-note slot="end">{{ task.date | date: 'shortDate' }}</ion-note>
+        </ion-item>
+      </ion-list>
+
+      <!-- Dropdown for Completed Tasks -->
+      <ion-list *ngIf="showCompleted">
+        <ion-item *ngFor="let task of completedTasks" (click)="selectTask(task)" [color]="'success'">
           <ion-label>{{ task.description }}</ion-label>
           <ion-note slot="end">{{ task.date | date: 'shortDate' }}</ion-note>
         </ion-item>
       </ion-list>
     </ion-card-content>
   </ion-card>
+
+  <!-- Display Selected Task Details -->
+ <!-- Inside your <ion-card> for selected task -->
+  <ion-card *ngIf="selectedTask">
+    <ion-card-header color="dark">
+      <ion-card-title>{{ selectedTask.description }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="task-details">
+        <p><strong>Due Date:</strong> {{ selectedTask.date | date: 'shortDate' }}</p>
+        <p><strong>Status:</strong> {{ selectedTask.status | titlecase }}</p>
+        <p><strong>Category:</strong> {{ selectedTask.category }}</p>
+        <p><strong>Notes:</strong> {{ selectedTask.notes }}</p>
+        <ion-img *ngIf="selectedTask.imagePath" [src]="selectedTask.imagePath" class="task-image"></ion-img> <!-- Image Display -->
+      </div>
+    </ion-card-content>
+  </ion-card>
+
 
   <!-- Notifications Section -->
   <ion-card>
@@ -71,7 +109,7 @@
     </ion-card-header>
     <ion-card-content>
       <ion-list>
-        <ion-item *ngFor="let task of upcomingMaintenance">
+        <ion-item *ngFor="let task of upcomingMaintenance" (click)="selectTask(task)">
           <ion-label>
             <h2>{{ task.description }}</h2>
             <p>Due: {{ task.date | date: 'shortDate' }}</p>
@@ -81,5 +119,4 @@
       </ion-list>
     </ion-card-content>
   </ion-card>
-
 </ion-content>

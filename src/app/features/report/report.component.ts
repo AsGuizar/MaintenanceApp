@@ -82,7 +82,7 @@ export class ReportComponent implements OnInit {
 
   // Method to download the report as CSV using Capacitor's Filesystem
   async downloadReport() {
-    let csvContent = 'Description,Status,Due Date,Category\n';
+    let csvContent = 'Description,Status,Due Date,Category,Image File\n';
   
     // Combine all tasks for the report
     const allTasks = [...this.addedTasks, ...this.inProgressTasks, ...this.finishedTasks];
@@ -90,9 +90,14 @@ export class ReportComponent implements OnInit {
     allTasks.forEach(task => {
       // Escape the commas and quotes in the task description to ensure valid CSV formatting
       const description = task.description.replace(/"/g, '""'); // Escape double quotes
-      const row = `"${description}",${task.status},"${task.date}","${task.category}"`; // Quote values
+      
+      // Check if imagePath exists and escape it, otherwise use an empty string
+      const imageFile = task.imagePath ? task.imagePath.replace(/"/g, '""') : ''; // Safe access to imagePath
+      
+      const row = `"${description}",${task.status},"${task.date}","${task.category}","${imageFile}"`; // Quote values
       csvContent += row + '\n';
     });
+    
   
     // Show loading spinner
     this.isLoading = true;
@@ -130,9 +135,6 @@ export class ReportComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  goToSettings() {
-    this.router.navigate(['/settings']);
-  }
 
   goToMaintenance() {
     this.router.navigate(['../maintenance']);

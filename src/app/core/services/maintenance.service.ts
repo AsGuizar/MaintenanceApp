@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core'; 
 import { MaintenanceTask } from '../../models/maintenance.model';
 
 @Injectable({

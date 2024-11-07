@@ -3,10 +3,10 @@
     <ion-title>Maintenance</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="goHome()">
-        <ion-icon name="home-outline"></ion-icon> <!-- Home Icon -->
+        <ion-icon name="home-outline"></ion-icon>
       </ion-button>
       <ion-button (click)="goToReports()">
-        <ion-icon name="bar-chart-outline"></ion-icon> <!-- Reports Icon -->
+        <ion-icon name="bar-chart-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -19,6 +19,7 @@
       <ion-card-title>{{ isEditing ? 'Edit Task' : 'Add New Task' }}</ion-card-title>
     </ion-card-header>
     <ion-card-content>
+      <!-- Input Fields for Task -->
       <ion-item>
         <ion-label>Description</ion-label>
         <ion-input [(ngModel)]="newTask.description"></ion-input>
@@ -70,10 +71,13 @@
         </ion-select>
       </ion-item>
 
+      <!-- URL Image Input -->
       <ion-item>
-        <input type="file" (change)="onFileSelected($event)" multiple />
+        <ion-label>Image URL (Optional)</ion-label>
+        <ion-input [(ngModel)]="newTask.imagePath" placeholder="Enter Image URL"></ion-input>
       </ion-item>
 
+      <!-- Submit Button -->
       <ion-button expand="full" (click)="isEditing ? updateTask() : addTask()">
         {{ isEditing ? 'Update Task' : 'Add Task' }}
       </ion-button>
@@ -82,37 +86,31 @@
 
   <!-- Task List -->
   <ion-list>
-    <ng-container *ngFor="let task of maintenanceService.tasks">
-      <ion-item (click)="toggleTaskDetails(task)">
-        <ion-label>
-          <h2>{{ task.description }}</h2>
-          <p>{{ task.status | titlecase }}</p>
-        </ion-label>
-      </ion-item>
+    <ion-item *ngFor="let task of maintenanceService.tasks" (click)="toggleTaskDetails(task)">
+      <ion-label>
+        <h2>{{ task.description }}</h2>
+        <p>Status: {{ task.status }}</p>
+      </ion-label>
+      <!-- Edit and Delete buttons -->
+      <ion-button fill="clear" (click)="editTask(task)">Edit</ion-button>
+      <ion-button fill="clear" color="danger" (click)="deleteTask(task.id)">Delete</ion-button>
+    </ion-item>
 
-      <!-- Task Details: Show when task is expanded -->
+    <!-- Expanded Task Details -->
+    <ng-container *ngFor="let task of maintenanceService.tasks">
       <ion-item *ngIf="expandedTaskId === task.id">
         <ion-label>
-          <p>Details for task: {{ task.description }}</p>
-          <p>Reminder: {{ task.reminderDate | date: 'shortDate' }}</p>
-          <p>Due Date: {{ task.date | date: 'shortDate' }}</p>
-          <p>Frequency: {{ task.frequency | titlecase }}</p>
-          <p>Status: {{ task.status | titlecase }}</p>
-          <p>Category: {{ task.category | titlecase }}</p>
+          <h3>Task Details:</h3>
+          <p>Description: {{ task.description }}</p>
+          <p>Category: {{ task.category }}</p>
+          <p>Reminder Date: {{ task.reminderDate | date }}</p>
+          <p>Status: {{ task.status }}</p>
 
-          <!-- Attachments -->
-          <div *ngIf="task.attachments && task.attachments.length > 0">
-            <p>Attachments:</p>
-            <ul>
-              <li *ngFor="let attachment of task.attachments">{{ attachment }}</li>
-            </ul>
-          </div>
-
-          <!-- Edit and Delete Buttons -->
-          <ion-buttons>
-            <ion-button color="primary" (click)="editTask(task)">Edit</ion-button>
-            <ion-button color="danger" (click)="deleteTask(task.id)">Delete</ion-button>
-          </ion-buttons>
+          <!-- Display the image if URL or uploaded image is provided -->
+          <ion-item *ngIf="task.imagePath">
+            <ion-label>Image:</ion-label>
+            <img *ngIf="task.imagePath" [src]="task.imagePath" alt="Task Image" width="200"/>
+          </ion-item>
         </ion-label>
       </ion-item>
     </ng-container>

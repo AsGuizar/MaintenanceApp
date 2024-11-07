@@ -7,12 +7,9 @@
     </ion-buttons>
     <ion-title>Reports</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="goToSettings()">
-        <ion-icon name="settings-outline"></ion-icon>
-      </ion-button>
       <ion-button (click)="goToMaintenance()">
-        <ion-icon name="construct-outline"></ion-icon> 
-      </ion-button> 
+        <ion-icon name="construct-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -77,6 +74,7 @@
             <h2>{{ task.description }}</h2>
             <p>Status: {{ task.status }}</p>
             <p>Due: {{ task.date | date: 'shortDate' }}</p>
+            <p>Image File: {{ task.imagePath }}</p> <!-- Display image path/file name -->
           </ion-label>
         </ion-item>
       </ion-list>
@@ -89,6 +87,7 @@
             <h2>{{ task.description }}</h2>
             <p>Status: {{ task.status }}</p>
             <p>Due: {{ task.date | date: 'shortDate' }}</p>
+            <p>Image File: {{ task.imagePath }}</p> <!-- Display image path/file name -->
           </ion-label>
         </ion-item>
       </ion-list>
@@ -101,6 +100,7 @@
             <h2>{{ task.description }}</h2>
             <p>Status: {{ task.status }}</p>
             <p>Due: {{ task.date | date: 'shortDate' }}</p>
+            <p>Image File: {{ task.imagePath }}</p> <!-- Display image path/file name -->
           </ion-label>
         </ion-item>
       </ion-list>

@@ -148,4 +148,28 @@
       }
     }
   }
+
+  .task-image {
+    width: 150px;          /* Set fixed size for the image */
+    height: 150px;         /* Ensure it's square */
+    object-fit: cover;     /* Ensures the image is contained without stretching */
+    border-radius: 15px;   /* Rounded corners */
+    margin: 20px auto;     /* Centers the image horizontally */
+    display: block;        /* Ensures it's a block-level element for centering */
+  }
+  
+
+.task-details {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #d1d9e6;
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  strong {
+    font-weight: bold;
+  }
+}
 }

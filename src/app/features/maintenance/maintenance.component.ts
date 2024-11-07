@@ -4,6 +4,7 @@ import { MaintenanceService } from '../../core/services/maintenance.service';
 import { MaintenanceTask } from '../../models/maintenance.model';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { NotificationService } from '../../core/services/notification.service';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 @Component({
   selector: 'app-maintenance',
@@ -19,14 +20,15 @@ export class MaintenanceComponent {
     date: new Date(),
     status: 'pending',
     frequency: 'unique',
-    attachments: []
+    attachments: [],
+    imagePath: '',  // Add imagePath to the task model
   };
 
   public isEditing: boolean = false;
   private currentTaskId: number = 0;
   public selectedCategory: string = '';
   public isCustomCategory: boolean = false;
-  public expandedTaskId: number | null = null; // Track which task is expanded
+  public expandedTaskId: number | null = null;
 
   constructor(
     public maintenanceService: MaintenanceService,
@@ -64,10 +66,10 @@ export class MaintenanceComponent {
 
   editTask(task: MaintenanceTask) {
     this.isEditing = true;
-    this.currentTaskId = task.id;  // Keep track of the task being edited
-    this.newTask = { ...task };    // Copy task details to form
-    this.selectedCategory = task.category;  // Set the selected category
-    this.isCustomCategory = this.selectedCategory === 'Other';  // Handle custom category
+    this.currentTaskId = task.id;
+    this.newTask = { ...task };
+    this.selectedCategory = task.category;
+    this.isCustomCategory = this.selectedCategory === 'Other';
   }
 
   updateTask() {
@@ -76,9 +78,9 @@ export class MaintenanceComponent {
       return;
     }
     this.localNotifications.cancel(this.currentTaskId);
-    this.maintenanceService.updateTask(this.newTask);  // Update the existing task
-    this.scheduleNotification(this.newTask);  // Reschedule notification after update
-    this.resetTask();  // Reset form
+    this.maintenanceService.updateTask(this.newTask);
+    this.scheduleNotification(this.newTask);
+    this.resetTask();
   }
 
   resetTask() {
@@ -90,7 +92,8 @@ export class MaintenanceComponent {
       date: new Date(),
       status: 'pending',
       frequency: 'unique',
-      attachments: []
+      attachments: [],
+      imagePath: '',  // Reset image path
     };
     this.selectedCategory = '';
     this.isEditing = false;
@@ -99,10 +102,10 @@ export class MaintenanceComponent {
 
   deleteTask(taskId: number) {
     this.maintenanceService.deleteTask(taskId);
-    this.localNotifications.cancel(taskId.toString());
+    this.localNotifications.cancel(taskId);
     this.notificationService.scheduleNotification(
       'Maintenance Reminder Cancelled',
-      `Reminder for task ID ${taskId.toString()} has been cancelled.`,
+      `Reminder for task ID ${taskId} has been cancelled.`,
       { at: new Date() }
     );
   }
@@ -115,10 +118,44 @@ export class MaintenanceComponent {
     }
   }
 
-  // Toggle the task details when clicked
+  // Handle image uploads
+  onImageSelected(event: Event) {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files) {
+      const imageFile = fileInput.files[0];  // Handle only the first selected image
+      this.uploadImage(imageFile);
+    }
+  }
+
+  // Upload image to filesystem
+  async uploadImage(imageFile: File) {
+    try {
+      // Generate a unique path for storing the image
+      const fileName = `task_${this.newTask.id}_${imageFile.name}`;
+      const filePath = `${Directory.Data}/${fileName}`;
+
+      // Write the image to the filesystem
+      const result = await Filesystem.writeFile({
+        path: filePath,
+        data: imageFile,
+        directory: Directory.Data,
+        encoding: Encoding.UTF8,
+      });
+
+      // Set the image path in the task object
+      this.newTask.imagePath = result.uri;
+
+      console.log('Image uploaded successfully:', result.uri);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+  }
+
   toggleTaskDetails(task: MaintenanceTask) {
+    // Toggle the expanded task details
     this.expandedTaskId = this.expandedTaskId === task.id ? null : task.id;
   }
+  
 
   private generateId(): number {
     return Math.floor(Math.random() * 1000000);
@@ -130,7 +167,7 @@ export class MaintenanceComponent {
       title: 'Maintenance Reminder',
       text: `Reminder for: ${task.description}`,
       trigger: { at: new Date(task.reminderDate) },
-      foreground: true
+      foreground: true,
     });
   }
 }

@@ -15,7 +15,13 @@ export class HomeComponent implements OnInit {
   completedTasks: MaintenanceTask[] = [];
   reminders: MaintenanceTask[] = [];
   upcomingMaintenance: MaintenanceTask[] = [];
+
+  // Dropdown visibility flags
   showPending: boolean = false;
+  showInProgress: boolean = false;
+  showCompleted: boolean = false;
+
+  selectedTask: MaintenanceTask | null = null; // Track selected task for details view
 
   constructor(
     private maintenanceService: MaintenanceService,
@@ -46,12 +52,16 @@ export class HomeComponent implements OnInit {
     this.showPending = !this.showPending;
   }
 
-  showInProgressTasks() {
-    // Navigate to a dedicated In Progress tasks page if needed
+  toggleInProgressTasks() {
+    this.showInProgress = !this.showInProgress;
   }
 
-  showCompletedTasks() {
-    // Navigate to a dedicated Completed tasks page if needed
+  toggleCompletedTasks() {
+    this.showCompleted = !this.showCompleted;
+  }
+
+  selectTask(task: MaintenanceTask) {
+    this.selectedTask = task; // Set the selected task
   }
 
   goToMaintenance() {
