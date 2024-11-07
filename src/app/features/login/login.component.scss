@@ -1,57 +1,41 @@
-:host {
-  ion-toolbar {
-    --background: #1e1e1e;
-    --color: #ffffff;
-  }
+.auth-card {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background: var(--ion-background-color);
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
-  ion-content {
-    --background: #2a2a2a;
-  }
+.auth-icon {
+  font-size: 50px;
+  color: var(--ion-color-primary);
+  margin-bottom: 20px;
+}
 
-  .auth-card {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #3b3b3b;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: #ffffff;
-    text-align: center;
-  }
+.auth-form ion-item {
+  margin-bottom: 15px;
+}
 
-  .auth-icon {
-    font-size: 60px;
-    color: #ffffff;
-    margin-bottom: 10px;
-  }
+.auth-button {
+  margin-top: 20px;
+  --border-radius: 10px;
+}
 
-  .auth-form ion-item {
-    --background: #4a4a4a;
-    margin-top: 15px;
-    border-radius: 8px;
-    padding: 10px;
-    color: #ffffff;
-  }
+.toggle-button {
+  margin-top: 15px;
+  font-size: 14px;
+  color: var(--ion-color-light);
+}
 
-  ion-label {
-    color: #b3b3b3;
-    font-size: 14px;
-  }
+ion-header {
+  --background: var(--ion-color-dark);
+}
 
-  ion-input {
-    color: #ffffff;
-  }
+ion-toolbar {
+  --background: var(--ion-color-dark);
+}
 
-  .auth-button {
-    margin-top: 20px;
-    font-weight: bold;
-    border-radius: 8px;
-    --background: #007aff;
-  }
-
-  .toggle-button {
-    margin-top: 10px;
-    font-size: 14px;
-    text-transform: none;
-  }
+ion-title {
+  color: var(--ion-color-light);
 }

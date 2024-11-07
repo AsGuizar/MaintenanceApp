@@ -5,32 +5,41 @@
 </ion-header>
 
 <ion-content color="medium" class="ion-padding">
+  <!-- Centered Authentication Card -->
   <div class="auth-card">
     <ion-icon [name]="isRegistering ? 'person-add-outline' : 'log-in-outline'" class="auth-icon"></ion-icon>
 
+    <!-- Authentication Form -->
     <form (ngSubmit)="isRegistering ? onRegister() : onLogin()" #loginForm="ngForm" class="auth-form">
+      
+      <!-- Name Input (only for registration) -->
       <ion-item *ngIf="isRegistering" lines="none">
         <ion-label position="floating">Name</ion-label>
         <ion-input type="text" [(ngModel)]="name" name="name" required></ion-input>
       </ion-item>
       
+      <!-- Email Input -->
       <ion-item lines="none">
         <ion-label position="floating">Email</ion-label>
         <ion-input type="email" [(ngModel)]="email" name="email" required></ion-input>
       </ion-item>
 
+      <!-- Password Input -->
       <ion-item lines="none">
         <ion-label position="floating">Password</ion-label>
         <ion-input type="password" [(ngModel)]="password" name="password" required></ion-input>
       </ion-item>
 
+      <!-- Submit Button -->
       <ion-button expand="block" type="submit" color="primary" class="auth-button">
         {{ isRegistering ? 'Register' : 'Login' }}
       </ion-button>
     </form>
 
+    <!-- Toggle Register/Login -->
     <ion-button expand="block" fill="clear" color="light" (click)="toggleRegister()" class="toggle-button">
       {{ isRegistering ? 'Already have an account? Login' : 'Don\'t have an account? Register' }}
     </ion-button>
   </div>
 </ion-content>
+

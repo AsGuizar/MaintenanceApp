@@ -1,59 +1,85 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Home Maintenance</ion-title>
+  <ion-toolbar color="dark">
+    <ion-title>Home</ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="goToMaintenance()">
+        <ion-icon name="construct-outline"></ion-icon>
+      </ion-button>
       <ion-button (click)="goToReports()">
-        <ion-icon slot="icon-only" name="analytics-outline"></ion-icon>
+        <ion-icon name="bar-chart-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <!-- Task Filter Section -->
-  <ion-segment [(ngModel)]="selectedCategory" (ionChange)="filterTasks()">
-    <ion-segment-button value="all">All</ion-segment-button>
-    <ion-segment-button value="home">Home</ion-segment-button>
-    <ion-segment-button value="vehicle">Vehicle</ion-segment-button>
-    <ion-segment-button value="health">Health</ion-segment-button>
-    <ion-segment-button value="pets">Pets</ion-segment-button>
-  </ion-segment>
+<ion-content color="medium" class="ion-padding">
 
-  <!-- Task List Section -->
-  <ion-list *ngFor="let task of filteredTasks">
-    <ion-item-sliding>
-      <ion-item (click)="toggleTaskDetails(task)">
-        <ion-label>
-          <h2>{{ task.description }}</h2>
-          <p>Due: {{ task.reminderDate | date: 'short' }}</p>
-        </ion-label>
-        <ion-icon name="checkmark-circle-outline" *ngIf="task.status === 'completed'" slot="end"></ion-icon>
-      </ion-item>
+  <!-- Personalized Greeting -->
+  <div class="greeting">
+    <h2>Hi, {{ username }}!</h2>
+  </div>
 
-      <!-- Task Actions -->
-      <ion-item-options side="end">
-        <ion-item-option color="primary" (click)="editTask(task)">
-          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-        </ion-item-option>
-        <ion-item-option color="danger" (click)="deleteTask(task.id)">
-          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
+  <!-- Task Status Section with Traffic Light Indicator -->
+  <ion-card>
+    <ion-card-header color="dark">
+      <ion-card-title>Task Status</ion-card-title>
+    </ion-card-header>
+    <ion-card-content class="task-status">
+      <div class="status-indicator">
+        <ion-button fill="clear" color="warning" (click)="togglePendingTasks()">
+          <ion-icon name="alert-circle-outline"></ion-icon> Pending
+          <ion-badge color="warning">{{ pendingTasks.length }}</ion-badge>
+        </ion-button>
+        <ion-button fill="clear" color="tertiary" (click)="showInProgressTasks()">
+          <ion-icon name="time-outline"></ion-icon> In Progress
+          <ion-badge color="tertiary">{{ inProgressTasks.length }}</ion-badge>
+        </ion-button>
+        <ion-button fill="clear" color="success" (click)="showCompletedTasks()">
+          <ion-icon name="checkmark-done-outline"></ion-icon> Completed
+          <ion-badge color="success">{{ completedTasks.length }}</ion-badge>
+        </ion-button>
+      </div>
+      <!-- Dropdown for Pending Tasks -->
+      <ion-list *ngIf="showPending">
+        <ion-item *ngFor="let task of pendingTasks">
+          <ion-label>{{ task.description }}</ion-label>
+          <ion-note slot="end">{{ task.date | date: 'shortDate' }}</ion-note>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
-    <!-- Task Details -->
-    <ion-card *ngIf="expandedTaskId === task.id">
-      <ion-card-content>
-        <p>{{ task.description }}</p>
-        <ion-button (click)="markAsCompleted(task)">Mark as Completed</ion-button>
-      </ion-card-content>
-    </ion-card>
-  </ion-list>
+  <!-- Notifications Section -->
+  <ion-card>
+    <ion-card-header color="dark">
+      <ion-card-title>Notifications</ion-card-title>
+    </ion-card-header>
+    <ion-card-content class="notifications">
+      <ion-list>
+        <ion-item *ngFor="let notification of reminders">
+          <ion-label>{{ notification.description }}</ion-label>
+          <ion-note slot="end">{{ notification.reminderDate | date: 'shortDate' }}</ion-note>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
-  <!-- Add New Task Button -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="goToMaintenance()">
-      <ion-icon name="add-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  <!-- Upcoming Maintenance Section -->
+  <ion-card>
+    <ion-card-header color="dark">
+      <ion-card-title>Upcoming Maintenance</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let task of upcomingMaintenance">
+          <ion-label>
+            <h2>{{ task.description }}</h2>
+            <p>Due: {{ task.date | date: 'shortDate' }}</p>
+          </ion-label>
+          <ion-note slot="end" color="primary">{{ task.category }}</ion-note>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
 </ion-content>

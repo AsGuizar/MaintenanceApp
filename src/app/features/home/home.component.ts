@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { MaintenanceService } from '../../core/services/maintenance.service';
-import { NotificationService } from '../../core/services/notification.service';
 import { MaintenanceTask } from '../../models/maintenance.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -10,82 +9,54 @@ import { MaintenanceTask } from '../../models/maintenance.model';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  public tasks: MaintenanceTask[] = [];
-  public filteredTasks: MaintenanceTask[] = [];
-  public selectedCategory: string = 'all';
-  public expandedTaskId: number | null = null;
+  username: string = ''; // Display the user's name
+  pendingTasks: MaintenanceTask[] = [];
+  inProgressTasks: MaintenanceTask[] = [];
+  completedTasks: MaintenanceTask[] = [];
+  reminders: MaintenanceTask[] = [];
+  upcomingMaintenance: MaintenanceTask[] = [];
+  showPending: boolean = false;
 
   constructor(
-    private router: Router,
     private maintenanceService: MaintenanceService,
-    private notificationService: NotificationService
+    private router: Router
   ) {}
 
   ngOnInit() {
+    this.username = localStorage.getItem('username') || 'User'; // Retrieve the name from storage
     this.loadTasks();
   }
 
-  // Load tasks and set notifications
   loadTasks() {
-    this.tasks = this.maintenanceService.getTasks();
-    this.filterTasks();
-    this.scheduleUpcomingNotifications();
+    const tasks = this.maintenanceService.getTasks();
+    this.pendingTasks = tasks.filter((task) => task.status === 'pending');
+    this.inProgressTasks = tasks.filter((task) => task.status === 'in progress');
+    this.completedTasks = tasks.filter((task) => task.status === 'completed');
+    this.reminders = tasks.filter(
+      (task) => new Date(task.reminderDate) <= new Date()
+    );
+    this.upcomingMaintenance = tasks.filter(
+      (task) => new Date(task.date) > new Date()
+    );
   }
 
-  // Filter tasks based on selected category
-  filterTasks() {
-    this.filteredTasks = this.selectedCategory === 'all'
-      ? this.tasks
-      : this.tasks.filter(task => task.category === this.selectedCategory);
+  togglePendingTasks() {
+    this.showPending = !this.showPending;
   }
 
-  // Schedule notifications for upcoming tasks
-  scheduleUpcomingNotifications() {
-    const now = new Date();
-    this.tasks.forEach(task => {
-      if (new Date(task.reminderDate) > now) {
-        this.notificationService.scheduleNotification(
-          'Upcoming Task',
-          `Don't forget to: ${task.description}`,
-          { at: new Date(task.reminderDate) }
-        );
-      }
-    });
+  showInProgressTasks() {
+    // Navigate to a dedicated In Progress tasks page if needed
   }
 
-  // Toggle task details view
-  toggleTaskDetails(task: MaintenanceTask) {
-    this.expandedTaskId = this.expandedTaskId === task.id ? null : task.id;
+  showCompletedTasks() {
+    // Navigate to a dedicated Completed tasks page if needed
   }
 
-  // Navigate to Maintenance component to add new tasks
   goToMaintenance() {
     this.router.navigate(['/maintenance']);
   }
 
-  goToSettings() {
-    this.router.navigate(['/settings']);
-  }
-
   goToReports() {
-    this.router.navigate(['/report']);
-  }
-
-  // Mark task as completed
-  markAsCompleted(task: MaintenanceTask) {
-    task.status = 'completed';
-    this.maintenanceService.updateTask(task);
-    this.loadTasks();
-  }
-
-  // Edit task
-  editTask(task: MaintenanceTask) {
-    this.router.navigate(['/maintenance'], { state: { task } });
-  }
-
-  // Delete task
-  deleteTask(taskId: number) {
-    this.maintenanceService.deleteTask(taskId);
-    this.loadTasks();
+    this.router.navigate(['../report']);
   }
 }
