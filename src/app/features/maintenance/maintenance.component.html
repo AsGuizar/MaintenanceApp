@@ -1,15 +1,18 @@
-<ion-header> 
+<ion-header>
   <ion-toolbar>
     <ion-title>Maintenance</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="goToHome()">Home</ion-button> <!-- Added Home button -->
-      <ion-button (click)="goToReports()">Reports</ion-button>
+      <ion-button (click)="goHome()">
+        <ion-icon name="home-outline"></ion-icon> <!-- Home Icon -->
+      </ion-button>
+      <ion-button (click)="goToReports()">
+        <ion-icon name="bar-chart-outline"></ion-icon> <!-- Reports Icon -->
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-
-<ion-content>
+<ion-content class="page-content">
   <!-- Add New Task Form -->
   <ion-card>
     <ion-card-header>
@@ -30,6 +33,12 @@
           <ion-select-option value="Vehicles">Vehicles</ion-select-option>
           <ion-select-option value="Other">Other</ion-select-option>
         </ion-select>
+      </ion-item>
+
+      <!-- Custom Category Input -->
+      <ion-item *ngIf="isCustomCategory">
+        <ion-label>Custom Category</ion-label>
+        <ion-input [(ngModel)]="newTask.category" placeholder="Enter custom category"></ion-input>
       </ion-item>
 
       <ion-item>

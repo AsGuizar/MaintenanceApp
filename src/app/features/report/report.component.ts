@@ -38,37 +38,43 @@ export class ReportComponent implements OnInit {
     // Reset date error
     this.dateError = false;
 
-    if (this.startDate && this.endDate) {
-      const start = new Date(this.startDate);
-      const end = new Date(this.endDate);
-
-      // Check if start date is before end date
-      if (start > end) {
-        this.dateError = true;
-        return;
-      }
-
-      // Filter tasks by date range and selected category
-      this.addedTasks = this.tasks.filter(task =>
-        new Date(task.date) >= start &&
-        new Date(task.date) <= end &&
-        (this.selectedCategory === '' || task.category === this.selectedCategory) // Filter based on selected category or show all categories
-      );
-
-      this.inProgressTasks = this.tasks.filter(task =>
-        task.status === 'in progress' &&
-        new Date(task.date) >= start &&
-        new Date(task.date) <= end &&
-        (this.selectedCategory === '' || task.category === this.selectedCategory) // Filter based on selected category or show all categories
-      );
-
-      this.finishedTasks = this.tasks.filter(task =>
-        task.status === 'completed' &&
-        new Date(task.date) >= start &&
-        new Date(task.date) <= end &&
-        (this.selectedCategory === '' || task.category === this.selectedCategory) // Filter based on selected category or show all categories
-      );
+    if (!this.isValidDate(this.startDate) || !this.isValidDate(this.endDate)) {
+      this.dateError = true;
+      return;
     }
+
+    const start = new Date(this.startDate);
+    const end = new Date(this.endDate);
+
+    // Check if start date is before end date
+    if (start > end) {
+      this.dateError = true;
+      return;
+    }
+
+    // Filter tasks by date range and selected category
+    this.addedTasks = this.tasks.filter(task =>
+      new Date(task.date) >= start &&
+      new Date(task.date) <= end &&
+      (this.selectedCategory === '' || task.category === this.selectedCategory || 
+        (this.selectedCategory === 'Other' && task.category !== 'House' && task.category !== 'Pets' && task.category !== 'Health' && task.category !== 'Vehicles')) // Handle 'Other' category
+    );
+
+    this.inProgressTasks = this.tasks.filter(task =>
+      task.status === 'in progress' &&
+      new Date(task.date) >= start &&
+      new Date(task.date) <= end &&
+      (this.selectedCategory === '' || task.category === this.selectedCategory || 
+        (this.selectedCategory === 'Other' && task.category !== 'House' && task.category !== 'Pets' && task.category !== 'Health' && task.category !== 'Vehicles'))
+    );
+
+    this.finishedTasks = this.tasks.filter(task =>
+      task.status === 'completed' &&
+      new Date(task.date) >= start &&
+      new Date(task.date) <= end &&
+      (this.selectedCategory === '' || task.category === this.selectedCategory || 
+        (this.selectedCategory === 'Other' && task.category !== 'House' && task.category !== 'Pets' && task.category !== 'Health' && task.category !== 'Vehicles'))
+    );
   }
 
   goHome() {

@@ -1,4 +1,3 @@
-// src/app/core/services/maintenance.service.ts
 import { Injectable } from '@angular/core';
 import { MaintenanceTask } from '../../models/maintenance.model';
 
@@ -37,12 +36,10 @@ export class MaintenanceService {
   }
 
   // Method to delete a task
-  // Method to delete a task
-  deleteTask(taskId: number) { // Change taskId to number
-  this.tasks = this.tasks.filter(task => task.id !== taskId); // Ensure comparison uses number
-  this.saveTasks();
-}
-
+  deleteTask(taskId: number) {
+    this.tasks = this.tasks.filter(task => task.id !== taskId);
+    this.saveTasks();
+  }
 
   saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(this.tasks));
@@ -55,21 +52,8 @@ export class MaintenanceService {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'maintenance_tasks_backup.json';
+    a.download = 'tasks_backup.json';
     a.click();
     window.URL.revokeObjectURL(url);
-  }
-
-  setReminder(task: MaintenanceTask, reminderDate: Date) {
-    const currentTime = new Date().getTime();
-    const reminderTime = reminderDate.getTime();
-
-    if (reminderTime > currentTime) {
-      const timeUntilReminder = reminderTime - currentTime;
-
-      setTimeout(() => {
-        alert(`Reminder: ${task.description} is due!`);
-      }, timeUntilReminder);
-    }
   }
 }

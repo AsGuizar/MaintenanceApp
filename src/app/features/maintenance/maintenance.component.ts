@@ -39,17 +39,12 @@ export class MaintenanceComponent {
     this.router.navigate(['/home']);
   }
 
-  goToHome() {
-    this.router.navigate(['/home']);
+  goToReports() {
+    this.router.navigate(['../report']);
   }
-  
 
   goToSettings() {
     this.router.navigate(['../settings']);
-  }
-
-  goToReports() {
-    this.router.navigate(['../report']);
   }
 
   onCategoryChange() {

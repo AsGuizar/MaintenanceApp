@@ -18,6 +18,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <!-- Date Selection -->
   <ion-item>
     <ion-label>Start Date</ion-label>
     <ion-input type="date" [(ngModel)]="startDate"></ion-input>
@@ -27,15 +28,16 @@
     <ion-input type="date" [(ngModel)]="endDate"></ion-input>
   </ion-item>
 
+  <!-- Category Selection -->
   <ion-item>
     <ion-label position="floating">Category</ion-label>
     <ion-select [(ngModel)]="selectedCategory" name="categorySelect" (ionChange)="generateReport()">
-      <ion-select-option value="">All Categories</ion-select-option> <!-- Option for all categories -->
+      <ion-select-option value="">All Categories</ion-select-option>
       <ion-select-option value="House">House</ion-select-option>
       <ion-select-option value="Pets">Pets</ion-select-option>
       <ion-select-option value="Health">Health</ion-select-option>
       <ion-select-option value="Vehicles">Vehicles</ion-select-option>
-      <ion-select-option value="Other">Other</ion-select-option>
+      <ion-select-option value="Other">Other</ion-select-option> 
     </ion-select>
   </ion-item>
 
@@ -44,13 +46,16 @@
     <ion-label color="danger">Please select a valid start and end date!</ion-label>
   </ion-item>
 
+  <!-- Generate Report Button -->
   <ion-button expand="full" (click)="generateReport()">Generate Report</ion-button>
 
+  <!-- Report Display -->
   <ion-card *ngIf="addedTasks.length || inProgressTasks.length || finishedTasks.length">
     <ion-card-header>
       <ion-card-title>Maintenance Report</ion-card-title>
     </ion-card-header>
     <ion-card-content>
+      <!-- Added Tasks -->
       <h3>Added Tasks:</h3>
       <ion-list>
         <ion-item *ngFor="let task of addedTasks">
@@ -62,6 +67,7 @@
         </ion-item>
       </ion-list>
       
+      <!-- In Progress Tasks -->
       <h3>In Progress Tasks:</h3>
       <ion-list>
         <ion-item *ngFor="let task of inProgressTasks">
@@ -73,6 +79,7 @@
         </ion-item>
       </ion-list>
       
+      <!-- Finished Tasks -->
       <h3>Finished Tasks:</h3>
       <ion-list>
         <ion-item *ngFor="let task of finishedTasks">
