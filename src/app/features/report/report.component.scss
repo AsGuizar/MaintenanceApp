@@ -69,6 +69,11 @@ ion-select {
   margin-bottom: 1rem;
 }
 
+ion-item ion-label[color="danger"] {
+  font-size: 1rem;
+  color: #f44336; // Red color for error message
+}
+
 @media (max-width: 576px) {
   ion-card {
     padding: 0.5rem; // Reduce padding for smaller screens

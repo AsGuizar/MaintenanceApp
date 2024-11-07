@@ -17,6 +17,7 @@ export class ReportComponent implements OnInit {
   inProgressTasks: MaintenanceTask[] = [];
   finishedTasks: MaintenanceTask[] = [];
   selectedCategory: string = '';
+  dateError: boolean = false;
 
   constructor(private maintenanceService: MaintenanceService, private router: Router) {}
 
@@ -28,25 +29,44 @@ export class ReportComponent implements OnInit {
     this.tasks = this.maintenanceService.getTasks(); // Assuming this returns all tasks
   }
 
+  // Check if date is in a valid format
+  isValidDate(date: string): boolean {
+    return !isNaN(Date.parse(date));
+  }
+
   generateReport() {
+    // Reset date error
+    this.dateError = false;
+
     if (this.startDate && this.endDate) {
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
 
+      // Check if start date is before end date
+      if (start > end) {
+        this.dateError = true;
+        return;
+      }
+
+      // Filter tasks by date range and selected category
       this.addedTasks = this.tasks.filter(task =>
-        task.status !== 'completed' &&
-        new Date(task.date) >= start && new Date(task.date) <= end &&
-        (this.selectedCategory === '' || task.category === this.selectedCategory)
+        new Date(task.date) >= start &&
+        new Date(task.date) <= end &&
+        (this.selectedCategory === '' || task.category === this.selectedCategory) // Filter based on selected category or show all categories
       );
 
       this.inProgressTasks = this.tasks.filter(task =>
-        task.status === 'in progress' && new Date(task.date) >= start && new Date(task.date) <= end &&
-        (this.selectedCategory === '' || task.category === this.selectedCategory)
+        task.status === 'in progress' &&
+        new Date(task.date) >= start &&
+        new Date(task.date) <= end &&
+        (this.selectedCategory === '' || task.category === this.selectedCategory) // Filter based on selected category or show all categories
       );
 
       this.finishedTasks = this.tasks.filter(task =>
-        task.status === 'completed' && new Date(task.date) >= start && new Date(task.date) <= end &&
-        (this.selectedCategory === '' || task.category === this.selectedCategory)
+        task.status === 'completed' &&
+        new Date(task.date) >= start &&
+        new Date(task.date) <= end &&
+        (this.selectedCategory === '' || task.category === this.selectedCategory) // Filter based on selected category or show all categories
       );
     }
   }

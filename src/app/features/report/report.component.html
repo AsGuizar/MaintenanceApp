@@ -26,8 +26,9 @@
     <ion-label>End Date</ion-label>
     <ion-input type="date" [(ngModel)]="endDate"></ion-input>
   </ion-item>
+
   <ion-item>
-   <ion-label position="floating">Category</ion-label>
+    <ion-label position="floating">Category</ion-label>
     <ion-select [(ngModel)]="selectedCategory" name="categorySelect" (ionChange)="generateReport()">
       <ion-select-option value="">All Categories</ion-select-option> <!-- Option for all categories -->
       <ion-select-option value="House">House</ion-select-option>
@@ -37,6 +38,12 @@
       <ion-select-option value="Other">Other</ion-select-option>
     </ion-select>
   </ion-item>
+
+  <!-- Error message for invalid dates -->
+  <ion-item *ngIf="dateError">
+    <ion-label color="danger">Please select a valid start and end date!</ion-label>
+  </ion-item>
+
   <ion-button expand="full" (click)="generateReport()">Generate Report</ion-button>
 
   <ion-card *ngIf="addedTasks.length || inProgressTasks.length || finishedTasks.length">
