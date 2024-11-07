@@ -23,7 +23,9 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.username = localStorage.getItem('username') || 'User'; // Retrieve the name from storage
+    // Retrieve the name from localStorage
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.username = user.name || 'User'; // Default to 'User' if no name is found
     this.loadTasks();
   }
 

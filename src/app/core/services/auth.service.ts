@@ -10,7 +10,6 @@ export class AuthService {
 
   login(email: string, password: string): boolean {
     const storedUser = localStorage.getItem('user');
-
     if (storedUser) {
       const user = JSON.parse(storedUser);
       if (user.email === email && user.password === password) {
@@ -23,9 +22,10 @@ export class AuthService {
 
   register(email: string, password: string, name: string): boolean {
     const user = { email, password, name };
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user)); // Store user in localStorage
     return true; // Registration successful
   }
+  
 
   logout() {
     this.isLoggedIn = false;
@@ -39,5 +39,11 @@ export class AuthService {
   getUserName(): string {
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser).name : 'User';
+  }
+
+  // New method to get the current user ID (using email as a unique ID)
+  getCurrentUserId(): string | null {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser).email : null;
   }
 }

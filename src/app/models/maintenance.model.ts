@@ -1,4 +1,3 @@
-// src/app/models/maintenance.model.ts
 export interface MaintenanceTask {
   id: number;                                   // Unique identifier for the task
   description: string;                          // Description of the maintenance task
