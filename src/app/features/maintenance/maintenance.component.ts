@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MaintenanceService } from '../../core/services/maintenance.service';
 import { MaintenanceTask } from '../../models/maintenance.model';
-import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { NotificationService } from '../../core/services/notification.service';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
@@ -33,7 +32,6 @@ export class MaintenanceComponent {
   constructor(
     public maintenanceService: MaintenanceService,
     private router: Router,
-    private localNotifications: LocalNotifications,
     private notificationService: NotificationService
   ) {}
 
@@ -77,7 +75,6 @@ export class MaintenanceComponent {
       console.error('Reminder date must be in the future.');
       return;
     }
-    this.localNotifications.cancel(this.currentTaskId);
     this.maintenanceService.updateTask(this.newTask);
     this.scheduleNotification(this.newTask);
     this.resetTask();
@@ -102,12 +99,12 @@ export class MaintenanceComponent {
 
   deleteTask(taskId: number) {
     this.maintenanceService.deleteTask(taskId);
-    this.localNotifications.cancel(taskId);
-    this.notificationService.scheduleNotification(
-      'Maintenance Reminder Cancelled',
-      `Reminder for task ID ${taskId} has been cancelled.`,
-      { at: new Date() }
-    );
+    this.notificationService.scheduleNotification({
+      title: 'Maintenance Reminder Cancelled',
+      body: `Reminder for task ID ${taskId} has been cancelled.`,
+      id: taskId,
+      schedule: { at: new Date() }
+    });
   }
 
   onFileSelected(event: Event) {
@@ -155,19 +152,17 @@ export class MaintenanceComponent {
     // Toggle the expanded task details
     this.expandedTaskId = this.expandedTaskId === task.id ? null : task.id;
   }
-  
 
   private generateId(): number {
     return Math.floor(Math.random() * 1000000);
   }
 
   private scheduleNotification(task: MaintenanceTask) {
-    this.localNotifications.schedule({
-      id: task.id,
+    this.notificationService.scheduleNotification({
       title: 'Maintenance Reminder',
-      text: `Reminder for: ${task.description}`,
-      trigger: { at: new Date(task.reminderDate) },
-      foreground: true,
+      body: `Reminder for: ${task.description}`,
+      id: task.id,
+      schedule: { at: new Date(task.reminderDate) },
     });
   }
 }
